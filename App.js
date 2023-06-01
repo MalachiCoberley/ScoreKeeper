@@ -2,8 +2,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
 import Button from "./components/Button";
+import Input from "./components/Input";
 
 const Stack = createNativeStackNavigator();
 const trophyIcon = require("./assets/trophy.png");
@@ -21,18 +22,30 @@ const App = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="NewGame"
+          component={NewGameScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
 const HomeScreen = ({ navigation }) => {
-  const clicked = () => alert("You FUCKEWED YOUESELF a button.");
   return (
     <View style={styles.container}>
-      <Button label="Start A New Game" onPressFunction={clicked}></Button>
+      <Button
+        label="Start A New Game"
+        onPress={() => navigation.navigate("NewGame")}
+      />
       <Image source={trophyIcon} style={styles.image}></Image>
-      <Button label="Resume Game" onPressFunction={clicked}></Button>
+      <Button
+        label="Resume Game"
+        onPress={() => alert("You FUCKEWED YOUESELF a button.")}
+      />
       <StatusBar style="auto" />
     </View>
   );
@@ -41,10 +54,20 @@ const HomeScreen = ({ navigation }) => {
 const NewGameScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Button label="Start A New Game"></Button>
-      <Image source={trophyIcon} style={styles.image}></Image>
-      <Button label="Resume Game"></Button>
-      <StatusBar style="auto" />
+      <Input></Input>
+      <Button
+        label="Select Team 1"
+        onPress={() => alert("You FUCKEWED YOUESELF a button.")}
+      />
+      <Text>VS</Text>
+      <Button
+        label="Select Team 2"
+        onPress={() => alert("You FUCKEWED YOUESELF a button.")}
+      />
+      <Button
+        label="Start Game"
+        onPress={() => alert("You FUCKEWED YOUESELF a button.")}
+      />
     </View>
   );
 };

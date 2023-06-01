@@ -23,6 +23,13 @@ const App = () => {
           }}
         />
         <Stack.Screen
+          name="IncompleteGames"
+          component={IncompleteGamesScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
           name="NewGame"
           component={NewGameScreen}
           options={{
@@ -43,6 +50,13 @@ const App = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="Score"
+          component={ScoreScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -56,7 +70,10 @@ const HomeScreen = ({ navigation }) => {
         onPress={() => navigation.navigate("NewGame")}
       />
       <Image source={trophyIcon} style={styles.image}></Image>
-      <Button label="Resume Game" onPress={() => alert("Pressed")} />
+      <Button
+        label="Resume Game"
+        onPress={() => navigation.navigate("IncompleteGames")}
+      />
       <StatusBar style="auto" />
     </View>
   );
@@ -75,7 +92,7 @@ const NewGameScreen = ({ navigation }) => {
         label="Select Team 2"
         onPress={() => navigation.navigate("SelectTeam")}
       />
-      <Button label="Start Game" onPress={() => alert("Pressed")} />
+      <Button label="Start Game" onPress={() => navigation.navigate("Score")} />
     </View>
   );
 };
@@ -99,6 +116,30 @@ const TeamCreationScreen = ({ navigation }) => {
       <Text>Placeholder for a List of players to select</Text>
       <Button label="+ Player" onPress={() => alert("Pressed")} />
       <Button label="Confirm Team" onPress={() => alert("Pressed")} />
+    </View>
+  );
+};
+
+const IncompleteGamesScreen = ({ navigation }) => {
+  return (
+    <View style={styles.container}>
+      <Text>Placeholder for a List of incomplete games</Text>
+      <Button
+        label="Start A New Game"
+        onPress={() => navigation.navigate("NewGame")}
+      />
+    </View>
+  );
+};
+
+const ScoreScreen = ({ navigation }) => {
+  return (
+    <View style={styles.container}>
+      <Text>Team Placeholder</Text>
+      <Button label="-" onPress={() => alert("T1 Increased")} />
+      <Text>Team 1 Score Placeholder</Text>
+      <Button label="+" onPress={() => alert("T1 Increased")} />
+      <Button label="Declare Winner" onPress={() => alert("Really?!?!?!")} />
     </View>
   );
 };

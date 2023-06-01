@@ -29,6 +29,20 @@ const App = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="SelectTeam"
+          component={SelectTeamScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="CreateTeam"
+          component={TeamCreationScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -42,10 +56,7 @@ const HomeScreen = ({ navigation }) => {
         onPress={() => navigation.navigate("NewGame")}
       />
       <Image source={trophyIcon} style={styles.image}></Image>
-      <Button
-        label="Resume Game"
-        onPress={() => alert("You FUCKEWED YOUESELF a button.")}
-      />
+      <Button label="Resume Game" onPress={() => alert("Pressed")} />
       <StatusBar style="auto" />
     </View>
   );
@@ -54,20 +65,40 @@ const HomeScreen = ({ navigation }) => {
 const NewGameScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Input></Input>
+      <Input tempText={"Enter Game Name"}></Input>
       <Button
         label="Select Team 1"
-        onPress={() => alert("You FUCKEWED YOUESELF a button.")}
+        onPress={() => navigation.navigate("SelectTeam")}
       />
       <Text>VS</Text>
       <Button
         label="Select Team 2"
-        onPress={() => alert("You FUCKEWED YOUESELF a button.")}
+        onPress={() => navigation.navigate("SelectTeam")}
       />
+      <Button label="Start Game" onPress={() => alert("Pressed")} />
+    </View>
+  );
+};
+
+const SelectTeamScreen = ({ navigation }) => {
+  return (
+    <View style={styles.container}>
+      <Text>Placeholder for a List of teams</Text>
       <Button
-        label="Start Game"
-        onPress={() => alert("You FUCKEWED YOUESELF a button.")}
+        label="New Team"
+        onPress={() => navigation.navigate("CreateTeam")}
       />
+    </View>
+  );
+};
+
+const TeamCreationScreen = ({ navigation }) => {
+  return (
+    <View style={styles.container}>
+      <Input tempText={"Enter Team Name"}></Input>
+      <Text>Placeholder for a List of players to select</Text>
+      <Button label="+ Player" onPress={() => alert("Pressed")} />
+      <Button label="Confirm Team" onPress={() => alert("Pressed")} />
     </View>
   );
 };

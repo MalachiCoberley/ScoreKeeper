@@ -1,9 +1,8 @@
 import React from "react";
 import { SafeAreaView, StyleSheet, TextInput } from "react-native";
 
-const Input = () => {
-  const [text, onChangeText] = React.useState("Enter Your Game Name Here");
-  const [number, onChangeNumber] = React.useState("");
+const Input = ({tempText}) => {
+  const [text, onChangeText] = React.useState(tempText);
 
   return (
     <SafeAreaView>

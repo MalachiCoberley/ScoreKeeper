@@ -2,7 +2,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, View, FlatList } from "react-native";
+import * as SQLite from 'expo-sqlite'
 import Button from "./components/Button";
 import Input from "./components/Input";
 
@@ -10,13 +11,13 @@ const Stack = createNativeStackNavigator();
 const trophyIcon = require("./assets/trophy.png");
 
 const App = () => {
-  // const db = SQLite.openDatabase("scores.db");
+  const db = SQLite.openDatabase("scores.db");
   // const [isLoading, setIsLoading] = useState(false);
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="Home"
+            name="Home"
           component={HomeScreen}
           options={{
             headerShown: false,
@@ -109,11 +110,38 @@ const SelectTeamScreen = ({ navigation }) => {
   );
 };
 
+let data = [
+  {
+    id: 123,
+    title: "Malachi"
+  },
+  {
+    id: 1223,
+    title: "Jess"
+  },
+  {
+    id: 3123,
+    title: "Caleb"
+  },
+  {
+    id: 1423,
+    title: "Sandy"
+  },
+]
+const Item = ({title}) => (
+  <View style={styles.item}>
+    <Button label={title} onPress={() => alert(`Pressed ${title}`)} />
+  </View>
+);
+
+
 const TeamCreationScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Input tempText={"Enter Team Name"}></Input>
-      <Text>Placeholder for a List of players to select</Text>
+      <FlatList data={data}
+       renderItem={({item}) => <Item title={item.title} />}
+       keyExtractor={item => item.id}/>
       <Button label="+ Player" onPress={() => alert("Pressed")} />
       <Button label="Confirm Team" onPress={() => alert("Pressed")} />
     </View>
@@ -136,7 +164,7 @@ const ScoreScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>Team Placeholder</Text>
-      <Button label="-" onPress={() => alert("T1 Increased")} />
+      <Button label="-" onPress={() => alert("T1 decreased")} />
       <Text>Team 1 Score Placeholder</Text>
       <Button label="+" onPress={() => alert("T1 Increased")} />
       <Button label="Declare Winner" onPress={() => alert("Really?!?!?!")} />
@@ -150,6 +178,8 @@ const styles = StyleSheet.create({
     backgroundColor: "lightgray",
     alignItems: "center",
     justifyContent: "center",
+    paddingTop: 40,
+    paddingBottom: 40,
   },
   image: {
     width: 320,

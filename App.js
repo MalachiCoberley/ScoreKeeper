@@ -1,23 +1,22 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as SQLite from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { Image, StyleSheet, Text, View, FlatList } from "react-native";
-import * as SQLite from 'expo-sqlite'
+import { FlatList, Image, StyleSheet, Text, View, TextInput } from "react-native";
 import Button from "./components/Button";
-import Input from "./components/Input";
 
 const Stack = createNativeStackNavigator();
 const trophyIcon = require("./assets/trophy.png");
 
 const App = () => {
   const db = SQLite.openDatabase("scores.db");
-  // const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = React.useState(false);
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-            name="Home"
+          name="Home"
           component={HomeScreen}
           options={{
             headerShown: false,
@@ -39,7 +38,7 @@ const App = () => {
         />
         <Stack.Screen
           name="SelectTeam"
-          component={SelectTeamScreen}
+          component={NewTeamScreen}
           options={{
             headerShown: false,
           }}
@@ -81,9 +80,16 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const NewGameScreen = ({ navigation }) => {
+  const [currentGameName, setGameName] = React.useState("Enter Game Name");
+  const saveAndStart = () => {
+    //TODO: onClick for Start Game button - Create Game with Teams and name
+    //Should probs remove itself from Nav stack so you will have to choose resume 
+    return
+  }
+
   return (
     <View style={styles.container}>
-      <Input tempText={"Enter Game Name"}></Input>
+      <TextInput style={styles.input} value={currentGameName} onChangeText={setGameName}></TextInput>
       <Button
         label="Select Team 1"
         onPress={() => navigation.navigate("SelectTeam")}
@@ -98,7 +104,7 @@ const NewGameScreen = ({ navigation }) => {
   );
 };
 
-const SelectTeamScreen = ({ navigation }) => {
+const NewTeamScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>Placeholder for a List of teams</Text>
@@ -113,35 +119,36 @@ const SelectTeamScreen = ({ navigation }) => {
 let data = [
   {
     id: 123,
-    title: "Malachi"
+    title: "Malachi",
   },
   {
     id: 1223,
-    title: "Jess"
+    title: "Jess",
   },
   {
     id: 3123,
-    title: "Caleb"
+    title: "Caleb",
   },
   {
     id: 1423,
-    title: "Sandy"
+    title: "Sandy",
   },
-]
-const Item = ({title}) => (
+];
+const Item = ({ title }) => (
   <View style={styles.item}>
     <Button label={title} onPress={() => alert(`Pressed ${title}`)} />
   </View>
 );
 
-
 const TeamCreationScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Input tempText={"Enter Team Name"}></Input>
-      <FlatList data={data}
-       renderItem={({item}) => <Item title={item.title} />}
-       keyExtractor={item => item.id}/>
+      <TextInput style={styles.input} tempText={"Enter Team Name"}></TextInput>
+      <FlatList
+        data={data}
+        renderItem={({ item }) => <Item title={item.title} />}
+        keyExtractor={(item) => item.id}
+      />
       <Button label="+ Player" onPress={() => alert("Pressed")} />
       <Button label="Confirm Team" onPress={() => alert("Pressed")} />
     </View>
@@ -186,6 +193,15 @@ const styles = StyleSheet.create({
     height: 320,
     marginTop: 40,
     marginBottom: 40,
+  },
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    backgroundColor: "black",
+    color: "#fff",
+    fontSize: 16,
   },
 });
 

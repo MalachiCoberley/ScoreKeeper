@@ -1,17 +1,30 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as SQLite from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
-import { FlatList, Image, StyleSheet, Text, View, TextInput } from "react-native";
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import Button from "./components/Button";
+import { database } from "./components/database";
 
 const Stack = createNativeStackNavigator();
 const trophyIcon = require("./assets/trophy.png");
 
 const App = () => {
-  const db = SQLite.openDatabase("scores.db");
+  const [players, setPlayers] = React.useState([]);
   // const [isLoading, setIsLoading] = React.useState(false);
+
+  //Create App Database
+  React.useEffect(() => {
+    database.setupDatabase();
+  });
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -38,14 +51,14 @@ const App = () => {
         />
         <Stack.Screen
           name="SelectTeam"
-          component={NewTeamScreen}
+          component={SelectTeamScreen}
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
           name="CreateTeam"
-          component={TeamCreationScreen}
+          component={NewTeamScreen}
           options={{
             headerShown: false,
           }}
@@ -83,13 +96,17 @@ const NewGameScreen = ({ navigation }) => {
   const [currentGameName, setGameName] = React.useState("Enter Game Name");
   const saveAndStart = () => {
     //TODO: onClick for Start Game button - Create Game with Teams and name
-    //Should probs remove itself from Nav stack so you will have to choose resume 
-    return
-  }
+    //Should probs remove itself from Nav stack so you will have to choose resume
+    return;
+  };
 
   return (
     <View style={styles.container}>
-      <TextInput style={styles.input} value={currentGameName} onChangeText={setGameName}></TextInput>
+      <TextInput
+        style={styles.input}
+        value={currentGameName}
+        onChangeText={setGameName}
+      ></TextInput>
       <Button
         label="Select Team 1"
         onPress={() => navigation.navigate("SelectTeam")}
@@ -104,7 +121,7 @@ const NewGameScreen = ({ navigation }) => {
   );
 };
 
-const NewTeamScreen = ({ navigation }) => {
+const SelectTeamScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>Placeholder for a List of teams</Text>
@@ -120,18 +137,22 @@ let data = [
   {
     id: 123,
     title: "Malachi",
+    selected: false,
   },
   {
     id: 1223,
     title: "Jess",
+    selected: false,
   },
   {
     id: 3123,
     title: "Caleb",
+    selected: false,
   },
   {
     id: 1423,
     title: "Sandy",
+    selected: false,
   },
 ];
 const Item = ({ title }) => (
@@ -140,16 +161,40 @@ const Item = ({ title }) => (
   </View>
 );
 
-const TeamCreationScreen = ({ navigation }) => {
+const NewTeamScreen = ({ navigation }) => {
+  const [currentTeamName, setTeamName] = React.useState("New Team Name");
+  const [addNewPlayer, setAddNewPlayer] = React.useState(false);
+  const [newPlayerName, setNewPlayerName] = React.useState("Name");
   return (
     <View style={styles.container}>
-      <TextInput style={styles.input} tempText={"Enter Team Name"}></TextInput>
+      <TextInput
+        style={styles.input}
+        value={currentTeamName}
+        onChangeText={setTeamName}
+      ></TextInput>
       <FlatList
         data={data}
         renderItem={({ item }) => <Item title={item.title} />}
         keyExtractor={(item) => item.id}
       />
-      <Button label="+ Player" onPress={() => alert("Pressed")} />
+      {addNewPlayer ? (
+        <View>
+          <TextInput
+            style={styles.input}
+            value={newPlayerName}
+            onChangeText={setNewPlayerName}
+          />
+          <Button
+            label="Create Player"
+            onPress={() => {
+              database.addNewPlayer(newPlayerName);
+              setAddNewPlayer(false);
+            }}
+          />
+        </View>
+      ) : (
+        <Button label="+ Player" onPress={() => setAddNewPlayer(true)} />
+      )}
       <Button label="Confirm Team" onPress={() => alert("Pressed")} />
     </View>
   );

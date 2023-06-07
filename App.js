@@ -196,7 +196,8 @@ const NewTeamScreen = ({ navigation }) => {
               database.addNewPlayer(newPlayerName);
               /*
               Rather than using a callback that returns the ID for a new player, I just fudge the ID
-              by adding 1 to the last ID in my list. obviously prone to breaking but i think we're ok.
+              by adding 1 to the last ID in my list.
+              This can fuck team creation if it's not accurate. Note to self if the WRONG PLAYER IS ASSIGNED TO A TEAM.
               */
               let newId = allPlayers[allPlayers.length - 1].id + 1;
               let newPlayerObject = {

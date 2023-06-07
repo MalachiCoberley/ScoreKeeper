@@ -18,7 +18,6 @@ const Stack = createNativeStackNavigator();
 const trophyIcon = require("./assets/trophy.png");
 
 const App = () => {
-  const [players, setPlayers] = React.useState([]);
   // const [isLoading, setIsLoading] = React.useState(false);
 
   //Create App Database
@@ -142,7 +141,6 @@ const NewTeamScreen = ({ navigation }) => {
   const [selectedPlayers, setSelectedPlayers] = React.useState([]);
 
   const Item = ({ title, id }) => {
-    const [buttonPressed, setButtonPressed] = React.useState(false);
     return (
       <View style={styles.buttonContainer}>
         <Pressable
@@ -150,16 +148,9 @@ const NewTeamScreen = ({ navigation }) => {
           onPress={() => {
             if (!selectedPlayers.includes(id)) {
               setSelectedPlayers([...selectedPlayers, id]);
-              setButtonPressed(true);
-            } else {
-              setButtonPressed(false);
             }
-            alert(`Pressed ${title}`);
-            console.log(selectedPlayers);
-            return;
           }}
         >
-          {buttonPressed ? <Text style={styles.checkMark}>X</Text> : null}
           <Text style={styles.buttonLabel}>{title}</Text>
         </Pressable>
       </View>
@@ -179,7 +170,6 @@ const NewTeamScreen = ({ navigation }) => {
       ></TextInput>
       <FlatList
         data={allPlayers}
-        extraData={selectedPlayers}
         renderItem={({ item }) => <Item title={item.name} id={item.id} />}
         keyExtractor={(item) => item.id}
       />
@@ -199,7 +189,10 @@ const NewTeamScreen = ({ navigation }) => {
               by adding 1 to the last ID in my list.
               This can fuck team creation if it's not accurate. Note to self if the WRONG PLAYER IS ASSIGNED TO A TEAM.
               */
-              let newId = allPlayers[allPlayers.length - 1].id + 1;
+              let newId =
+                allPlayers.length > 0
+                  ? allPlayers[allPlayers.length - 1].id + 1
+                  : 1;
               let newPlayerObject = {
                 id: newId,
                 name: newPlayerName,
@@ -215,7 +208,10 @@ const NewTeamScreen = ({ navigation }) => {
       )}
       <Button
         label="Confirm Team"
-        onPress={() => alert(`${selectedPlayers}`)}
+        onPress={() => {
+          console.log(selectedPlayers);
+          database.createTeam(currentTeamName, selectedPlayers);
+        }}
       />
     </View>
   );

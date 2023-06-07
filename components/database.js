@@ -19,13 +19,22 @@ const setupDatabase = () => {
   });
 };
 
-const addNewPlayer = (name) => {
+const addNewPlayer = async (name) => {
   db.transaction((tx) => {
     tx.executeSql("INSERT INTO players (name) values (?)", [name]);
+  });
+};
+
+const getAllPlayers = (setStateFunction) => {
+  db.transaction((tx) => {
+    tx.executeSql("SELECT * FROM players", null, (_, { rows: { _array } }) => {
+      setStateFunction(_array);
+    });
   });
 };
 
 export const database = {
   setupDatabase,
   addNewPlayer,
+  getAllPlayers,
 };

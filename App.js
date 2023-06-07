@@ -163,8 +163,14 @@ const Item = ({ title }) => (
 
 const NewTeamScreen = ({ navigation }) => {
   const [currentTeamName, setTeamName] = React.useState("New Team Name");
+  const [allPlayers, setAllPlayers] = React.useState([]);
   const [addNewPlayer, setAddNewPlayer] = React.useState(false);
   const [newPlayerName, setNewPlayerName] = React.useState("Name");
+
+  React.useEffect(() => {
+    database.getAllPlayers(setAllPlayers);
+  }, []);
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -173,8 +179,8 @@ const NewTeamScreen = ({ navigation }) => {
         onChangeText={setTeamName}
       ></TextInput>
       <FlatList
-        data={data}
-        renderItem={({ item }) => <Item title={item.title} />}
+        data={allPlayers}
+        renderItem={({ item }) => <Item title={item.name} />}
         keyExtractor={(item) => item.id}
       />
       {addNewPlayer ? (
@@ -188,7 +194,18 @@ const NewTeamScreen = ({ navigation }) => {
             label="Create Player"
             onPress={() => {
               database.addNewPlayer(newPlayerName);
+              /*
+              Rather than using a callback that returns the ID for a new player, I just fudge the ID
+              by adding 1 to the last ID in my list. obviously prone to breaking but i think we're ok.
+              */
+              let newId = allPlayers[allPlayers.length - 1].id + 1;
+              let newPlayerObject = {
+                id: newId,
+                name: newPlayerName,
+              };
               setAddNewPlayer(false);
+              setNewPlayerName("Name");
+              setAllPlayers([...allPlayers, newPlayerObject]);
             }}
           />
         </View>

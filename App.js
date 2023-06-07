@@ -5,6 +5,7 @@ import * as React from "react";
 import {
   FlatList,
   Image,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -133,39 +134,37 @@ const SelectTeamScreen = ({ navigation }) => {
   );
 };
 
-let data = [
-  {
-    id: 123,
-    title: "Malachi",
-    selected: false,
-  },
-  {
-    id: 1223,
-    title: "Jess",
-    selected: false,
-  },
-  {
-    id: 3123,
-    title: "Caleb",
-    selected: false,
-  },
-  {
-    id: 1423,
-    title: "Sandy",
-    selected: false,
-  },
-];
-const Item = ({ title }) => (
-  <View style={styles.item}>
-    <Button label={title} onPress={() => alert(`Pressed ${title}`)} />
-  </View>
-);
-
 const NewTeamScreen = ({ navigation }) => {
   const [currentTeamName, setTeamName] = React.useState("New Team Name");
   const [allPlayers, setAllPlayers] = React.useState([]);
   const [addNewPlayer, setAddNewPlayer] = React.useState(false);
   const [newPlayerName, setNewPlayerName] = React.useState("Name");
+  const [selectedPlayers, setSelectedPlayers] = React.useState([]);
+
+  const Item = ({ title, id }) => {
+    const [buttonPressed, setButtonPressed] = React.useState(false);
+    return (
+      <View style={styles.buttonContainer}>
+        <Pressable
+          style={styles.button}
+          onPress={() => {
+            if (!selectedPlayers.includes(id)) {
+              setSelectedPlayers([...selectedPlayers, id]);
+              setButtonPressed(true);
+            } else {
+              setButtonPressed(false);
+            }
+            alert(`Pressed ${title}`);
+            console.log(selectedPlayers);
+            return;
+          }}
+        >
+          {buttonPressed ? <Text style={styles.checkMark}>X</Text> : null}
+          <Text style={styles.buttonLabel}>{title}</Text>
+        </Pressable>
+      </View>
+    );
+  };
 
   React.useEffect(() => {
     database.getAllPlayers(setAllPlayers);
@@ -180,7 +179,8 @@ const NewTeamScreen = ({ navigation }) => {
       ></TextInput>
       <FlatList
         data={allPlayers}
-        renderItem={({ item }) => <Item title={item.name} />}
+        extraData={selectedPlayers}
+        renderItem={({ item }) => <Item title={item.name} id={item.id} />}
         keyExtractor={(item) => item.id}
       />
       {addNewPlayer ? (
@@ -213,7 +213,10 @@ const NewTeamScreen = ({ navigation }) => {
       ) : (
         <Button label="+ Player" onPress={() => setAddNewPlayer(true)} />
       )}
-      <Button label="Confirm Team" onPress={() => alert("Pressed")} />
+      <Button
+        label="Confirm Team"
+        onPress={() => alert(`${selectedPlayers}`)}
+      />
     </View>
   );
 };
@@ -265,6 +268,34 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     color: "#fff",
     fontSize: 16,
+  },
+  buttonContainer: {
+    width: 320,
+    height: 68,
+    marginHorizontal: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "black",
+    padding: 3,
+    borderRadius: 10,
+  },
+  button: {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    zIndex: 0,
+  },
+  buttonLabel: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  checkMark: {
+    color: "green",
+    fontSize: 16,
+    fontWeight: "bold",
+    marginRight: 5,
   },
 });
 

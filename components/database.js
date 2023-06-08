@@ -34,6 +34,14 @@ const getAllPlayers = (setStateFunction) => {
   });
 };
 
+const getAllTeams = (setStateFunction) => {
+  db.transaction((tx) => {
+    tx.executeSql("SELECT * FROM teams", null, (_, { rows: { _array } }) => {
+      setStateFunction(_array);
+    });
+  });
+};
+
 const createTeam = (teamName, players) => {
   if (players.length < 1 || teamName == "") {
     console.log("Invalid Team");
@@ -72,5 +80,6 @@ export const database = {
   addNewPlayer,
   getAllPlayers,
   createTeam,
+  getAllTeams,
   getTeamRoster
 };

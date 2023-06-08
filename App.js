@@ -1,4 +1,4 @@
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, StackActions } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
@@ -94,6 +94,8 @@ const HomeScreen = ({ navigation }) => {
 
 const NewGameScreen = ({ navigation }) => {
   const [currentGameName, setGameName] = React.useState("Enter Game Name");
+  const [teamOne, setTeamOne] = React.useState("Select A Team");
+  const [teamTwo, setTeamTwo] = React.useState("Select A Team");
   const saveAndStart = () => {
     //TODO: onClick for Start Game button - Create Game with Teams and name
     //Should probs remove itself from Nav stack so you will have to choose resume
@@ -108,23 +110,60 @@ const NewGameScreen = ({ navigation }) => {
         onChangeText={setGameName}
       ></TextInput>
       <Button
-        label="Select Team 1"
-        onPress={() => navigation.navigate("SelectTeam")}
+        label={teamOne}
+        onPress={() =>
+          navigation.navigate("SelectTeam", { setTeamFunction: setTeamOne })
+        }
       />
       <Text>VS</Text>
       <Button
-        label="Select Team 2"
-        onPress={() => navigation.navigate("SelectTeam")}
+        label={teamTwo}
+        onPress={() =>
+          navigation.navigate("SelectTeam", { setTeamFunction: setTeamTwo })
+        }
       />
-      <Button label="Start Game" onPress={() => navigation.navigate("Score")} />
+      <Button
+        label="Start Game"
+        onPress={() => {
+          console.log(teamOne);
+          navigation.navigate("Score");
+        }}
+      />
     </View>
   );
 };
 
-const SelectTeamScreen = ({ navigation }) => {
+const SelectTeamScreen = ({ route, navigation }) => {
+  const setTeamFunction = route.params.setTeamFunction;
+  const [allTeams, setAllTeams] = React.useState([]);
+
+  React.useEffect(() => {
+    database.getAllTeams(setAllTeams);
+  }, []);
+
+  const Item = ({ title, id }) => {
+    return (
+      <View style={styles.buttonContainer}>
+        <Pressable
+          style={styles.button}
+          onPress={() => {
+            setTeamFunction(title);
+            navigation.dispatch(StackActions.pop(1));
+          }}
+        >
+          <Text style={styles.buttonLabel}>{title}</Text>
+        </Pressable>
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Placeholder for a List of teams</Text>
+      <FlatList
+        data={allTeams}
+        renderItem={({ item }) => <Item title={item.name} id={item.id} />}
+        keyExtractor={(item) => item.id}
+      />
       <Button
         label="New Team"
         onPress={() => navigation.navigate("CreateTeam")}
@@ -211,6 +250,7 @@ const NewTeamScreen = ({ navigation }) => {
         onPress={() => {
           console.log(selectedPlayers);
           database.createTeam(currentTeamName, selectedPlayers);
+          navigation.dispatch(StackActions.pop(1));
         }}
       />
     </View>

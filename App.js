@@ -5,6 +5,7 @@ import * as React from "react";
 import {
   FlatList,
   Image,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -16,6 +17,17 @@ import { database } from "./components/database";
 
 const Stack = createNativeStackNavigator();
 const trophyIcon = require("./assets/trophy.png");
+const OsContext = React.createContext(Platform.OS);
+
+const IphoneBackButton = ({ navigation }) => {
+  return (
+    <View>
+      <Pressable onPress={() => navigation.dispatch(StackActions.pop(1))}>
+        <Text>{"< Back"}</Text>
+      </Pressable>
+    </View>
+  );
+};
 
 const App = () => {
   // const [isLoading, setIsLoading] = React.useState(false);
@@ -26,52 +38,54 @@ const App = () => {
   });
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="IncompleteGames"
-          component={IncompleteGamesScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="NewGame"
-          component={NewGameScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SelectTeam"
-          component={SelectTeamScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="CreateTeam"
-          component={NewTeamScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="Score"
-          component={ScoreScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <OsContext.Provider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="IncompleteGames"
+            component={IncompleteGamesScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="NewGame"
+            component={NewGameScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="SelectTeam"
+            component={SelectTeamScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="CreateTeam"
+            component={NewTeamScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Score"
+            component={ScoreScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </OsContext.Provider>
   );
 };
 
@@ -93,6 +107,7 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const NewGameScreen = ({ navigation }) => {
+  const isIphone = React.useContext(OsContext) == "ios";
   const [currentGameName, setGameName] = React.useState("Enter Game Name");
   const [teamOne, setTeamOne] = React.useState("Select A Team");
   const [teamTwo, setTeamTwo] = React.useState("Select A Team");
@@ -104,6 +119,7 @@ const NewGameScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {isIphone ? <IphoneBackButton navigation={navigation} /> : null}
       <TextInput
         style={styles.input}
         value={currentGameName}

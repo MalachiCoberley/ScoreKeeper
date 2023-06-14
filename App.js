@@ -1,4 +1,4 @@
-import { NavigationContainer, StackActions } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
@@ -17,12 +17,12 @@ import { database } from "./components/database";
 
 const Stack = createNativeStackNavigator();
 const trophyIcon = require("./assets/trophy.png");
-const OsContext = React.createContext(Platform.OS);
+const OsContext = React.createContext();
 
 const IphoneBackButton = ({ navigation }) => {
   return (
     <View>
-      <Pressable onPress={() => navigation.dispatch(StackActions.pop(1))}>
+      <Pressable onPress={() => navigation.goBack()}>
         <Text>{"< Back"}</Text>
       </Pressable>
     </View>
@@ -31,6 +31,7 @@ const IphoneBackButton = ({ navigation }) => {
 
 const App = () => {
   // const [isLoading, setIsLoading] = React.useState(false);
+  const [os, setOs] = React.useState(Platform.OS);
 
   //Create App Database
   React.useEffect(() => {
@@ -38,7 +39,7 @@ const App = () => {
   });
 
   return (
-    <OsContext.Provider>
+    <OsContext.Provider value={os}>
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
@@ -117,6 +118,7 @@ const NewGameScreen = ({ navigation }) => {
     return;
   };
 
+
   return (
     <View style={styles.container}>
       {isIphone ? <IphoneBackButton navigation={navigation} /> : null}
@@ -150,6 +152,7 @@ const NewGameScreen = ({ navigation }) => {
 };
 
 const SelectTeamScreen = ({ route, navigation }) => {
+  const isIphone = React.useContext(OsContext) == "ios";
   const setTeamFunction = route.params.setTeamFunction;
   const [allTeams, setAllTeams] = React.useState([]);
 
@@ -164,7 +167,7 @@ const SelectTeamScreen = ({ route, navigation }) => {
           style={styles.button}
           onPress={() => {
             setTeamFunction(title);
-            navigation.dispatch(StackActions.pop(1));
+            navigation.goBack();
           }}
         >
           <Text style={styles.buttonLabel}>{title}</Text>
@@ -175,6 +178,7 @@ const SelectTeamScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      {isIphone ? <IphoneBackButton navigation={navigation} /> : null}
       <FlatList
         data={allTeams}
         renderItem={({ item }) => <Item title={item.name} id={item.id} />}
@@ -189,6 +193,7 @@ const SelectTeamScreen = ({ route, navigation }) => {
 };
 
 const NewTeamScreen = ({ navigation }) => {
+  const isIphone = React.useContext(OsContext) == "ios";
   const [currentTeamName, setTeamName] = React.useState("New Team Name");
   const [allPlayers, setAllPlayers] = React.useState([]);
   const [addNewPlayer, setAddNewPlayer] = React.useState(false);
@@ -218,6 +223,7 @@ const NewTeamScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      {isIphone ? <IphoneBackButton navigation={navigation} /> : null}
       <TextInput
         style={styles.input}
         value={currentTeamName}
@@ -266,7 +272,7 @@ const NewTeamScreen = ({ navigation }) => {
         onPress={() => {
           console.log(selectedPlayers);
           database.createTeam(currentTeamName, selectedPlayers);
-          navigation.dispatch(StackActions.pop(1));
+          navigation.goBack();
         }}
       />
     </View>
@@ -274,8 +280,10 @@ const NewTeamScreen = ({ navigation }) => {
 };
 
 const IncompleteGamesScreen = ({ navigation }) => {
+  const isIphone = React.useContext(OsContext) == "ios";
   return (
     <View style={styles.container}>
+      {isIphone ? <IphoneBackButton navigation={navigation} /> : null}
       <Text>Placeholder for a List of incomplete games</Text>
       <Button
         label="Start A New Game"
@@ -286,8 +294,10 @@ const IncompleteGamesScreen = ({ navigation }) => {
 };
 
 const ScoreScreen = ({ navigation }) => {
+  const isIphone = React.useContext(OsContext) == "ios";
   return (
     <View style={styles.container}>
+      {isIphone ? <IphoneBackButton navigation={navigation} /> : null}
       <Text>Team Placeholder</Text>
       <Button label="-" onPress={() => alert("T1 decreased")} />
       <Text>Team 1 Score Placeholder</Text>

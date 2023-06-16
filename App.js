@@ -2,6 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
+import * as Font from "expo-font"
 import {
   Dimensions,
   FlatList,
@@ -15,11 +16,13 @@ import {
 } from "react-native";
 import Button from "./components/Button";
 import { database } from "./components/database";
+import useFonts from "./hooks/useFonts";
 
 const Stack = createNativeStackNavigator();
 const trophyIcon = require("./assets/trophy.png");
 const OsContext = React.createContext();
 const windowDimensions = Dimensions.get("window");
+
 
 const IphoneBackButton = ({ navigation }) => {
   return (
@@ -35,9 +38,16 @@ const App = () => {
   // const [isLoading, setIsLoading] = React.useState(false);
   const [os, setOs] = React.useState(Platform.OS);
 
+  const LoadFonts = async () => {
+    await useFonts();
+  };
+
   //Create App Database
   React.useEffect(() => {
     database.setupDatabase();
+    Font.loadAsync({
+      vs: require("./assets/fonts/ChrustyRock-ORLA.ttf"),
+    })
   });
 
   return (
@@ -134,7 +144,7 @@ const NewGameScreen = ({ navigation }) => {
           navigation.navigate("SelectTeam", { setTeamFunction: setTeamOne })
         }
       />
-      <Text>VS</Text>
+      <Text style={styles.vsText}>VS</Text>
       <Button
         label={teamTwo}
         onPress={() =>
@@ -368,11 +378,14 @@ const styles = StyleSheet.create({
     marginTop: 0,
     alignSelf: "flex-start",
     marginLeft: 15,
-
   },
   backText: {
     fontSize: 40,
-    fontWeight: "bold"
+    fontWeight: "bold",
+  },
+  vsText: {
+    fontSize: 80,
+    fontFamily: "vs",
   },
 });
 

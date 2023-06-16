@@ -25,7 +25,7 @@ const IphoneBackButton = ({ navigation }) => {
   return (
     <View style={styles.back}>
       <Pressable onPress={() => navigation.goBack()}>
-        <Text>{"< Back"}</Text>
+        <Text style={styles.backText}>{"<"}</Text>
       </Pressable>
     </View>
   );
@@ -367,6 +367,12 @@ const styles = StyleSheet.create({
   back: {
     marginTop: 0,
     alignSelf: "flex-start",
+    marginLeft: 15,
+
+  },
+  backText: {
+    fontSize: 40,
+    fontWeight: "bold"
   },
 });
 

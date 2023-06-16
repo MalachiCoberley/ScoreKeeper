@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StatusBar } from "expo-status-bar";
 import * as React from "react";
 import {
+  Dimensions,
   FlatList,
   Image,
   Platform,
@@ -18,10 +19,11 @@ import { database } from "./components/database";
 const Stack = createNativeStackNavigator();
 const trophyIcon = require("./assets/trophy.png");
 const OsContext = React.createContext();
+const windowDimensions = Dimensions.get("window");
 
 const IphoneBackButton = ({ navigation }) => {
   return (
-    <View>
+    <View style={styles.back}>
       <Pressable onPress={() => navigation.goBack()}>
         <Text>{"< Back"}</Text>
       </Pressable>
@@ -92,7 +94,7 @@ const App = () => {
 
 const HomeScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
+    <View style={styles.centerContainer}>
       <Button
         label="Start A New Game"
         onPress={() => navigation.navigate("NewGame")}
@@ -108,7 +110,7 @@ const HomeScreen = ({ navigation }) => {
 };
 
 const NewGameScreen = ({ navigation }) => {
-  const isIphone = React.useContext(OsContext) == "ios";
+  const isIphone = React.useContext(OsContext) !== "ios";
   const [currentGameName, setGameName] = React.useState("Enter Game Name");
   const [teamOne, setTeamOne] = React.useState("Select A Team");
   const [teamTwo, setTeamTwo] = React.useState("Select A Team");
@@ -117,7 +119,6 @@ const NewGameScreen = ({ navigation }) => {
     //Should probs remove itself from Nav stack so you will have to choose resume
     return;
   };
-
 
   return (
     <View style={styles.container}>
@@ -143,7 +144,7 @@ const NewGameScreen = ({ navigation }) => {
       <Button
         label="Start Game"
         onPress={() => {
-          console.log(teamOne);
+          console.log(teamOne, teamTwo);
           navigation.navigate("Score");
         }}
       />
@@ -308,13 +309,23 @@ const ScoreScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  centerContainer: {
     flex: 1,
     backgroundColor: "lightgray",
     alignItems: "center",
     justifyContent: "center",
     paddingTop: 40,
     paddingBottom: 40,
+    marginTop: 5,
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "lightgray",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    paddingTop: 40,
+    paddingBottom: 40,
+    marginTop: 5,
   },
   image: {
     width: 320,
@@ -353,11 +364,9 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
-  checkMark: {
-    color: "green",
-    fontSize: 16,
-    fontWeight: "bold",
-    marginRight: 5,
+  back: {
+    marginTop: 0,
+    alignSelf: "flex-start",
   },
 });
 
